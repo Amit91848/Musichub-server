@@ -1,0 +1,37 @@
+import { refreshAccessToken } from "../../utils/services";
+import { findProfileOfUser } from "../ProfileController";
+import { getSpotifyPlaylists } from "./spotify";
+import { getYoutubePlaylists } from "./youtube";
+import { getSoundcloudPlaylists } from "./soundcloud";
+import { CommonPlaylist, service } from "../../types";
+import { mapSpotifyToCommonFormat, mapYoutubeToCommonFormat } from "../../utils/map";
+
+export const getAllPlaylists = async (userId: string, service: service): Promise<CommonPlaylist[]> => {
+    const profile = await findProfileOfUser(userId, service);
+    if (!profile) {
+        return [];
+    }
+    let { accessToken, refreshToken, oauthId } = profile;
+    let playlists;
+
+    if (Date.now() as any > profile.expiresIn as any) {
+        try {
+            const token = await refreshAccessToken(refreshToken, profile?._id, service)
+            accessToken = token;
+        } catch (err) {
+            console.log('error in refreshing accessTOken: ', err)
+        }
+    }
+
+    if (service === 'spotify') {
+        playlists = await getSpotifyPlaylists(accessToken, oauthId);
+        return mapSpotifyToCommonFormat(playlists);
+    } else if (service === 'youtube') {
+        playlists = await getYoutubePlaylists(accessToken, oauthId);
+        return mapYoutubeToCommonFormat(playlists);
+    } else {
+        playlists = await getSoundcloudPlaylists(accessToken, oauthId);
+        return playlists;
+    }
+    return [];
+}
