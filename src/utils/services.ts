@@ -7,6 +7,51 @@ import axios from 'axios';
 
 const post = util.promisify(request.post);
 
+interface lastFmImage {
+    '#text': string,
+    size: 'small' | 'medium' | 'large' | 'extralarge' | 'mega' | ''
+}
+
+interface lastFmTag {
+    name: string,
+    url: string
+}
+
+export interface lastFmArtistInfo {
+    artist: {
+        name: string,
+        url: string,
+        image: lastFmImage[],
+        streamable: number,
+        ontour: number,
+        stats: {
+            listeners: string,
+            playcount: string
+        },
+        similar: {
+            artist: {
+                name: string,
+                image: lastFmImage[]
+            }[]
+        },
+        tags: {
+            tag: lastFmTag[]
+        },
+        bio: {
+            links: {
+                link: {
+                    '#text': string,
+                    rel: string,
+                    href: string
+                }
+            },
+            published: string,
+            summary: string,
+            content: string
+        }
+    }
+}
+
 export const checkAndRefreshAccessToken = async (expiresIn: number, _id: Types.ObjectId, refreshToken: string, service: service) => {
     if (Date.now() > expiresIn) {
         return await refreshAccessToken(refreshToken, _id, service);
@@ -51,4 +96,13 @@ export const refreshAccessToken = async (refreshToken: string, profile_id: Types
     }
     await updateProfile({ profile_id, accessToken });
     return accessToken;
+}
+
+export const lastFmArtistData = async (artistName: string) => {
+    const lastFmURL = 'http://ws.audioscrobbler.com/2.0';
+    const apiKey = '186044cb4b90ebed63b4d8e2ca8921a4';
+
+    const response = await axios.get(lastFmURL + `/?method=artist.getinfo&artist=${artistName}&api_key=${apiKey}&format=json`);
+
+    return response.data;
 }

@@ -16,6 +16,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-oauth2-refresh": "^2.1.0",
     "passport-spotify": "^2.0.0",
+    "redis": "^4.6.4",
     "request": "^2.88.2"
   },
   "devDependencies": {

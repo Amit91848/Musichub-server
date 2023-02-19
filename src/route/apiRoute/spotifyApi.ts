@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { getSpotifySearchQuery, getSpotifyPlaylists, getSpotifyTracks } from "../../controllers/ApiController/spotify";
+import { getSpotifySearchQuery, getSpotifyPlaylists, getSpotifyTracks, getSpotifyArtist, getSpotifyArtistTopTracks } from "../../controllers/ApiController/spotify";
 import { mapSpotifySearchTracksToCommonTracks, mapSpotifyTracksToCommonTracks } from "../../utils/map";
 import { findProfileOfUser } from "../../controllers/ProfileController";
 import { createAxiosIntance } from "../../utils/axios";
-import { SpotifyArtists, SpotifyTracksCommon } from "../../types/spotify";
-import { checkAndRefreshAccessToken } from "../../utils/services";
+import { SpotifyArtists, SpotifyTracksCommon, SpotifyTracksShort } from "../../types/spotify";
+import { checkAndRefreshAccessToken, lastFmArtistData, lastFmArtistInfo } from "../../utils/services";
 
 interface SpotifyDevices {
     id: string,
@@ -78,5 +78,24 @@ spotifyApi.get('/search/track/:query', async (req, res) => {
     // let mappedCommonTracks = { ...tracks, items: mappedTracks };
     res.json(mappedTracks);
 })
+
+spotifyApi.get('/artist/:artistId/:artistName', async (req, res) => {
+    const { artistId, artistName } = req.params;
+    const userId = req.user.userId;
+
+    const [artistTopTracks, artistOtherTracks, artistInfo] = await Promise.all([getSpotifyArtistTopTracks(userId, artistId), getSpotifySearchQuery(userId, artistName, 'tracks'), lastFmArtistData(artistName)]);
+    const mappedTopTracks = mapSpotifySearchTracksToCommonTracks(artistTopTracks.tracks);
+    const mappedOtherTracks = mapSpotifySearchTracksToCommonTracks(artistOtherTracks.items);
+
+    res.json({ topTracks: mappedTopTracks, otherTracks: mappedOtherTracks, artistInfo: artistInfo });
+})
+
+spotifyApi.get('/artist/:artistId/topTracks', async (req, res) => {
+    const artistId = req.params.artistId;
+
+    const artistTracks = await getSpotifyArtistTopTracks(req.user.userId, artistId);
+    res.json(artistTracks);
+});
+
 
 export default spotifyApi;
