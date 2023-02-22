@@ -59,7 +59,7 @@ export const mapYoutubePlaylistItemsToCommonTracks = (tracks: youtubePlaylistIte
 }
 
 export const mapYoutubeQueryResultToCommonTracks = (queryResults: youtubeSearchQuery[]): CommonTracks[] => {
-    return queryResults.map((query) => {
+    return queryResults?.map((query) => {
         return {
             album: {
                 id: query.id.videoId,
