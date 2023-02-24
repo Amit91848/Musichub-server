@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import apiRoute from './route/apiRoute';
 import cors from 'cors'
+import { createClient } from 'redis';
+import { connectRedis } from './config/redisSetup';
 
 const app = express();
 
@@ -37,6 +39,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
+
+connectRedis();
 
 app.use('/auth', authRoute);
 app.use('/api', apiRoute)

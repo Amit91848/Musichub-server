@@ -22,7 +22,7 @@ youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
 
         const playlistItems = await getYoutubePlaylistsItems(playlistId, accessToken);
         const mappedTracks = mapYoutubePlaylistItemsToCommonTracks(playlistItems);
-        res.json({ mappedTracks });
+        res.json(mappedTracks);
     }
 })
 

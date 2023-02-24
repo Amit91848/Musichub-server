@@ -6,6 +6,7 @@ import { getAllPlaylists } from '../../controllers/ApiController';
 import { CommonPlaylist } from '../../types/index'
 import userRoute from './userApi';
 import searchRoute from './searchApi';
+import redisClient from '../../config/redisSetup';
 
 const apiRoute = Router();
 
@@ -23,19 +24,28 @@ apiRoute.use('/youtube', youtubeApi);
 
 apiRoute.use('/playlists', async (req, res) => {
     let playlists: playlist;
+    const userId = req.user.userId;
 
-    try {
-        const spotifyPlaylists = await getAllPlaylists(req.user.userId, 'spotify');
-        const soundcloudPlaylists = await getAllPlaylists(req.user.userId, 'soundcloud');
-        const youtubePlaylists = await getAllPlaylists(req.user.userId, 'youtube');
-        playlists = {
-            soundcloud: soundcloudPlaylists,
-            youtube: youtubePlaylists,
-            spotify: spotifyPlaylists
+    const cachedPlaylist = await redisClient.get(`${userId}:all:Playlists`)
+    if (cachedPlaylist) {
+        playlists = JSON.parse(cachedPlaylist);
+        return res.status(200).json({ playlists });
+    } else {
+        try {
+            const spotifyPlaylists = await getAllPlaylists(userId, 'spotify');
+            const soundcloudPlaylists = await getAllPlaylists(userId, 'soundcloud');
+            const youtubePlaylists = await getAllPlaylists(userId, 'youtube');
+            playlists = {
+                soundcloud: soundcloudPlaylists,
+                youtube: youtubePlaylists,
+                spotify: spotifyPlaylists
+            }
+            await redisClient.set(`${userId}:all:Playlists`, JSON.stringify(playlists))
+            return res.status(200).json({ playlists });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ message: 'Internal server error' });
         }
-        res.status(200).json({ playlists });
-    } catch (err) {
-        console.log(err);
     }
 })
 
