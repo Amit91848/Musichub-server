@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { decode, sign, verify } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 
 export const createJWT = (payload: string): string => {
     return sign({ userId: payload }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });

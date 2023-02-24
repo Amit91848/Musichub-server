@@ -1,9 +1,11 @@
 import axios from "axios";
 import { youtubePlaylistItemsResponse } from "src/types/youtube";
+import { fetchProfileAndSetAccessToken } from "../../utils/services";
 
 const youtubeURL = process.env.YOUTUBE_BASE_URL;
 const youtubeKey = process.env.YOUTUBE_API_KEY;
-export const getYoutubePlaylists = async (accessToken: string, oauthId: string) => {
+export const getYoutubePlaylists = async (userId: string) => {
+    const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
     let playlistsInfo;
 
     try {
@@ -20,7 +22,8 @@ export const getYoutubePlaylists = async (accessToken: string, oauthId: string) 
     return playlistsInfo;
 }
 
-export const getYoutubePlaylistsItems = async (playlistId: string, accessToken: string) => {
+export const getYoutubePlaylistsItems = async (playlistId: string, userId: string) => {
+    const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
     let playlistsItems: youtubePlaylistItemsResponse[];
 
     try {
@@ -36,7 +39,8 @@ export const getYoutubePlaylistsItems = async (playlistId: string, accessToken: 
     }
 }
 
-export const getYoutubeSearchQuery = async (query: string, accessToken: string) => {
+export const getYoutubeSearchQuery = async (query: string, userId: string) => {
+    const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
     try {
         const response = await axios.get(`${youtubeURL}/search?part=snippet&maxResults=20&q=${query}&key=${youtubeKey}`, {
             headers: {

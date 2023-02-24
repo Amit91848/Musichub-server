@@ -1,5 +1,5 @@
 import request from 'request';
-import { updateProfile } from '../controllers/ProfileController';
+import { findProfileOfUser, updateProfile } from '../controllers/ProfileController';
 import util from 'util';
 import { Types } from 'mongoose';
 import { service } from '../types/index';
@@ -50,6 +50,22 @@ export interface lastFmArtistInfo {
             content: string
         }
     }
+}
+
+export const fetchProfileAndSetAccessToken = async (userId: string, source: service) => {
+
+    const profile = await findProfileOfUser(userId, source);
+    const { expiresIn, refreshToken, _id } = profile;
+    let { accessToken } = profile
+
+    let newAccessToken = await checkAndRefreshAccessToken(expiresIn, _id, refreshToken, source);
+
+    if (newAccessToken) {
+        console.log('new acccess token =', accessToken);
+        accessToken = newAccessToken;
+    }
+
+    return accessToken;
 }
 
 export const checkAndRefreshAccessToken = async (expiresIn: number, _id: Types.ObjectId, refreshToken: string, service: service) => {
