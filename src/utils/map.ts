@@ -2,7 +2,7 @@ import { Document, Types } from "mongoose";
 import { CommonPlaylist, CommonProfile, CommonTracks, service } from "../types";
 import { SpotifyPlaylist, SpotifyTracksShort } from "../types/spotify";
 import { youtubePlaylistItemsResponse, youtubePlaylistResponse, youtubeSearchQuery } from "../types/youtube";
-import { IProfile } from "../Schema/Profile";
+import { IProfile } from "../schema/Profile";
 
 export const mapSpotifyTracksToCommonTracks = (tracks: SpotifyTracksShort[]): CommonTracks[] => {
     return tracks?.map(track => {

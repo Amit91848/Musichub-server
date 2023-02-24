@@ -1,5 +1,5 @@
 import { Types } from "mongoose"
-import ProfileModel, { IProfile } from "../Schema/Profile";
+import ProfileModel, { IProfile } from "../schema/Profile";
 import { service } from "src/types";
 
 interface updateTypes {

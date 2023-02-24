@@ -1,5 +1,5 @@
 import { VerifyCallback } from "passport-spotify"
-import UserModel from "../Schema/User"
+import UserModel from "../schema/User"
 import { createProfile, doesProfileExist, updateProfile } from "./ProfileController";
 import { Request, Response } from "express";
 import { verify } from "jsonwebtoken";
