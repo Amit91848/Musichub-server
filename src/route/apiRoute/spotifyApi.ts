@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getSpotifySearchQuery, getSpotifyPlaylists, getSpotifyTracks, getSpotifyArtist, getSpotifyArtistTopTracks } from "../../controllers/ApiController/spotify";
+import { getSpotifySearchQuery, getSpotifyPlaylists, getSpotifyTracks, getSpotifyArtistTopTracks } from "../../controllers/ApiController/spotify";
 import { mapSpotifySearchTracksToCommonTracks, mapSpotifyTracksToCommonTracks } from "../../utils/map";
 import { findProfileOfUser } from "../../controllers/ProfileController";
 import { createAxiosIntance } from "../../utils/axios";
-import { SpotifyArtists, SpotifyTracksCommon, SpotifyTracksShort } from "../../types/spotify";
-import { checkAndRefreshAccessToken, lastFmArtistData, lastFmArtistInfo } from "../../utils/services";
-import redisClient from "../../config/redisSetup";
+import { SpotifyArtists, SpotifyTracksCommon } from "../../types/spotify";
+import { checkAndRefreshAccessToken, lastFmArtistData } from "../../utils/services";
+import { findInCache, setExCache } from "../../utils/redis";
 
 interface SpotifyDevices {
     id: string,
@@ -28,13 +28,13 @@ spotifyApi.get('/playlists', async (req, res) => {
 
 spotifyApi.get('/playlist/:id/tracks', async (req, res) => {
     const playlistId = req.params.id;
-    const cachedTracks = await redisClient.get(`spotify:playlist:${playlistId}`);
+    const cachedTracks = await findInCache(`spotify:playlist:${playlistId}`);
     if (cachedTracks) {
         return res.status(200).json(JSON.parse(cachedTracks));
     } else {
         const tracks = await getSpotifyTracks(req.user.userId, playlistId);
         const mappedTracks = mapSpotifyTracksToCommonTracks(tracks);
-        await redisClient.set(`spotify:playlist:${playlistId}`, JSON.stringify(mappedTracks));
+        await setExCache(`spotify:playlist:${playlistId}`, JSON.stringify(mappedTracks));
         return res.status(200).json(mappedTracks);
     }
 })
@@ -70,13 +70,13 @@ spotifyApi.get('/deviceId', async (req, res) => {
 spotifyApi.get('/search/artist/:query', async (req, res) => {
     const query = req.params.query;
 
-    const cachedArtist = await redisClient.get(`spotify:artistsQuery:${query}`);
+    const cachedArtist = await findInCache(`spotify:artistsQuery:${query}`);
 
     if (cachedArtist) {
         return res.status(200).json(JSON.parse(cachedArtist));
     } else {
         const artists: SpotifyArtists = await getSpotifySearchQuery(req.user.userId, query, 'artists')
-        await redisClient.set(`spotify:artistsQuery:${query}`, JSON.stringify(artists));
+        await setExCache(`spotify:artistsQuery:${query}`, JSON.stringify(artists));
         return res.status(200).json(artists);
     }
 })
@@ -84,13 +84,13 @@ spotifyApi.get('/search/artist/:query', async (req, res) => {
 spotifyApi.get('/search/track/:query', async (req, res) => {
     const query = req.params.query;
 
-    const cachedTracks = await redisClient.get(`spotify:tracksQuery:${query}`);
+    const cachedTracks = await findInCache(`spotify:tracksQuery:${query}`);
     if (cachedTracks) {
         return res.status(200).json(JSON.parse(cachedTracks));
     } else {
         let tracks: SpotifyTracksCommon = await getSpotifySearchQuery(req.user.userId, query, 'tracks')
         const mappedTracks = mapSpotifySearchTracksToCommonTracks(tracks.items)
-        await redisClient.set(`spotify:tracksQuery:${query}`, JSON.stringify(mappedTracks));
+        await setExCache(`spotify:tracksQuery:${query}`, JSON.stringify(mappedTracks));
         return res.status(200).json(mappedTracks);
     }
 })
@@ -99,7 +99,7 @@ spotifyApi.get('/artist/:artistId/:artistName', async (req, res) => {
     const { artistId, artistName } = req.params;
     const userId = req.user.userId;
 
-    const cachedArtist = await redisClient.get(`spotify:artist:${artistId}`);
+    const cachedArtist = await findInCache(`spotify:artist:${artistId}`);
 
     if (cachedArtist) {
         return res.status(200).json(JSON.parse(cachedArtist));
@@ -109,7 +109,7 @@ spotifyApi.get('/artist/:artistId/:artistName', async (req, res) => {
         const mappedOtherTracks = mapSpotifySearchTracksToCommonTracks(artistOtherTracks.items);
 
         const response = { topTracks: mappedTopTracks, otherTracks: mappedOtherTracks, artistInfo: artistInfo }
-        await redisClient.set(`spotify:artist:${artistId}`, JSON.stringify(response));
+        await setExCache(`spotify:artist:${artistId}`, JSON.stringify(response));
         return res.status(200).json(response);
     }
 })
@@ -117,13 +117,13 @@ spotifyApi.get('/artist/:artistId/:artistName', async (req, res) => {
 spotifyApi.get('/artist/:artistId/topTracks', async (req, res) => {
     const artistId = req.params.artistId;
 
-    const cachedTopTracks = await redisClient.get(`spotify:topTracks:${artistId}`);
+    const cachedTopTracks = await findInCache(`spotify:topTracks:${artistId}`);
 
     if (cachedTopTracks) {
         return res.status(200).json(JSON.parse(cachedTopTracks));
     } else {
         const artistTracks = await getSpotifyArtistTopTracks(req.user.userId, artistId);
-        await redisClient.set(`spotify:topTracks:${artistId}`, artistTracks);
+        await setExCache(`spotify:topTracks:${artistId}`, artistTracks);
         return res.json(artistTracks);
     }
 

@@ -54,6 +54,7 @@ export interface lastFmArtistInfo {
 
 export const fetchProfileAndSetAccessToken = async (userId: string, source: service) => {
 
+    console.log(userId + ' ' + source);
     const profile = await findProfileOfUser(userId, source);
     const { expiresIn, refreshToken, _id } = profile;
     let { accessToken } = profile

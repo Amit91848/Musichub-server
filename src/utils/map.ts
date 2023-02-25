@@ -120,25 +120,12 @@ export const mapYoutubeToCommonFormat = (playlists: youtubePlaylistResponse[]): 
     })
 }
 
-interface tp {
-    youtube: CommonProfile,
-    soundcloud: CommonProfile,
-    spotify: CommonProfile
-}
 
-export const mapProfileToCommonProfile = (profiles: (Document<unknown, any, IProfile> & IProfile & {
+
+export const mapProfileToCommonProfile = (profile: (Document<unknown, any, IProfile> & IProfile & {
     _id: Types.ObjectId;
-})[]): CommonProfile[] => {
-    return profiles?.map(profile => {
-        const provider = profile.provider;
-        return {
-            [provider]: {
-                image: profile.picture,
-                username: profile.name,
-                isConnected: true,
-                profileUrl: profile.oauthId,
-                id: profile.oauthId
-            }
-        }
-    })
+})): CommonProfile => {
+    const provider = profile.provider;
+
+
 }

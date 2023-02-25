@@ -32,12 +32,12 @@ export interface CommonTracks {
     id: string
 }
 
-export interface CommonProfile {
-    [x: string]: {
-        image: string | null,
-        isConnected: boolean,
-        profileUrl: string | null,
-        id: string | null,
-        username: string | null
-    }
-}
+// export interface CommonProfile {
+//     'soundcloud' | 'youtube' | 'spotify': {
+//     image: string | null,
+//         isConnected: boolean,
+//             profileUrl: string | null,
+//                 id: string | null,
+//                     username: string | null
+// }
+// }

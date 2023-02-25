@@ -8,7 +8,9 @@ import { createClient } from "redis";
 //     },
 // });
 
-const redisClient = createClient();
+const redisClient = createClient({
+    disableOfflineQueue: true
+});
 
 redisClient.on('error', err => console.log('Redis Client Error', err));
 
@@ -17,5 +19,3 @@ export async function connectRedis() {
 }
 
 export default redisClient;
-
-// userId:Source:Type

@@ -18,11 +18,13 @@ export const doesProfileExist = async (oauthId: string): Promise<(IProfile & { _
 }
 
 export const createProfile = async ({ accessToken, oauthId, provider, refreshToken, userId, name, picture }: IProfile) => {
+    // const nProvider = provider === 'google' ? 'youtube' : provider;
     const expiresIn = new Date(Date.now() + 3600 * 1000);
     const token = new ProfileModel({
         accessToken,
         expiresIn,
         oauthId,
+        // nProvider,
         provider,
         refreshToken,
         name,

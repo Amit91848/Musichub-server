@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getYoutubePlaylistsItems, getYoutubeSearchQuery } from '../../controllers/ApiController/youtube'
 import { mapYoutubePlaylistItemsToCommonTracks, mapYoutubeQueryResultToCommonTracks } from "../../utils/map";
-import redisClient from "../../config/redisSetup";
+import { findInCache, setExCache } from "../../utils/redis";
 
 const youtubeApi = Router();
 
@@ -9,7 +9,7 @@ youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
     const playlistId = req.params.playlistId;
     const userId = req.user.userId;
 
-    const cachedPlaylist = await redisClient.get(`youtube:playlist:${playlistId}`);
+    const cachedPlaylist = await findInCache(`youtube:playlist:${playlistId}`);
 
     if (cachedPlaylist) {
         return res.status(200).json(JSON.parse(cachedPlaylist));
@@ -17,7 +17,7 @@ youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
         const playlistItems = await getYoutubePlaylistsItems(playlistId, userId);
         const mappedTracks = mapYoutubePlaylistItemsToCommonTracks(playlistItems);
 
-        await redisClient.set(`youtube:playlist:${playlistId}`, JSON.stringify(mappedTracks));
+        await setExCache(`youtube:playlist:${playlistId}`, JSON.stringify(mappedTracks));
 
         return res.status(200).json(mappedTracks);
     }
@@ -27,14 +27,14 @@ youtubeApi.get('/search/:query', async (req, res) => {
     const query = req.params.query;
     const userId = req.user.userId;
 
-    const cachedQuery = await redisClient.get(`youtube:search:${query}`);
+    const cachedQuery = await findInCache(`youtube:search:${query}`);
 
     if (cachedQuery) {
         return res.status(200).json(JSON.parse(cachedQuery));
     } else {
         const queryResults = await getYoutubeSearchQuery(query, userId);
         const mappedQuery = mapYoutubeQueryResultToCommonTracks(queryResults.items);
-        await redisClient.set(`youtube:search:${query}`, JSON.stringify(mappedQuery));
+        await setExCache(`youtube:search:${query}`, JSON.stringify(mappedQuery));
         return res.status(200).json(mappedQuery);
     }
 })

@@ -27,7 +27,7 @@ export const getAllPlaylists = async (userId: string, service: service): Promise
         playlists = await getSpotifyPlaylists(accessToken, oauthId);
         return mapSpotifyToCommonFormat(playlists);
     } else if (service === 'youtube') {
-        playlists = await getYoutubePlaylists(accessToken, oauthId);
+        playlists = await getYoutubePlaylists(userId);
         return mapYoutubeToCommonFormat(playlists);
     } else {
         playlists = await getSoundcloudPlaylists(accessToken, oauthId);

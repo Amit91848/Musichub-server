@@ -1,9 +1,10 @@
 import mongoose, { Schema, Types } from 'mongoose';
+import { service } from '../types';
 
 export interface IProfile {
     refreshToken: string,
     userId: Types.ObjectId,
-    provider: string,
+    provider: service,
     expiresIn: number,
     accessToken: string,
     name: string,
