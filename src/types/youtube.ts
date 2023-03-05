@@ -50,6 +50,7 @@ export interface youtubePlaylistItemsResponse {
     contentDetails: {
         videoId: string,
         videoPublishedAt: string
+        duration: string
     }
 }
 
@@ -74,4 +75,23 @@ export interface youtubeSearchQuery {
         liveBroadcastContent: string,
         publishedTime: string
     }
+}
+
+export interface youtubeVideosQuery {
+    // kind: string,
+    // etag: string,
+    // items: {
+    kind: string,
+    etag: string,
+    id: string,
+    contentDetails: {
+        duration: string,
+        dimension: string,
+        definition: string,
+        caption: string,
+        licensedContent: string,
+        contentRating: {},
+        projection: string
+    }
+    // }[]
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { youtubePlaylistItemsResponse } from "src/types/youtube";
+import { youtubePlaylistItemsResponse, youtubeVideosQuery } from "src/types/youtube";
 import { fetchProfileAndSetAccessToken } from "../../utils/services";
 
 const youtubeURL = process.env.YOUTUBE_BASE_URL;
@@ -32,10 +32,11 @@ export const getYoutubePlaylistsItems = async (playlistId: string, userId: strin
                 Authorization: `Bearer ${accessToken}`
             }
         })
-        playlistsItems = response.data.items
+        playlistsItems = response.data.items;
         return playlistsItems;
     } catch (err) {
         console.log(err.data);
+        return;
     }
 }
 
@@ -48,6 +49,20 @@ export const getYoutubeSearchQuery = async (query: string, userId: string) => {
             }
         })
         return response.data;
+    } catch (err) {
+        return err;
+    }
+}
+
+export const getYoutubeVideoLength = async (id: string, userId: string): Promise<youtubeVideosQuery[]> => {
+    const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
+    try {
+        const response = await axios.get(`${youtubeURL}/videos?part=contentDetails&maxResults=50&id=${id}&key=${youtubeKey}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        return response.data.items;
     } catch (err) {
         return err;
     }

@@ -1,8 +1,9 @@
 import { Document, Types } from "mongoose";
-import { CommonPlaylist, CommonProfile, CommonTracks, service } from "../types";
+import { CommonPlaylist, CommonTracks } from "../types";
 import { SpotifyPlaylist, SpotifyTracksShort } from "../types/spotify";
 import { youtubePlaylistItemsResponse, youtubePlaylistResponse, youtubeSearchQuery } from "../types/youtube";
 import { IProfile } from "../schema/Profile";
+import { getYoutubeVideoLength } from "../controllers/ApiController/youtube";
 
 export const mapSpotifyTracksToCommonTracks = (tracks: SpotifyTracksShort[]): CommonTracks[] => {
     return tracks?.map(track => {
@@ -120,12 +121,40 @@ export const mapYoutubeToCommonFormat = (playlists: youtubePlaylistResponse[]): 
     })
 }
 
+export const mapYoutubeVideoDurationToPlaylistItems = async (items: CommonTracks[], userId: string): Promise<CommonTracks[]> => {
+    let idsString = '';
+    items.forEach(async (item) => {
+        idsString += item.id + ','
+    })
+    const videoQueries = await getYoutubeVideoLength(idsString, userId);
+    for (const query of videoQueries) {
+        // find the corresponding CommonTracks object by id
+        const video = items.find(v => v.id === query.id);
+        if (video) {
+            // set the duration property of the CommonTracks object
+            video.duration = convertDurationToSeconds(query.contentDetails.duration);
+        }
+    }
 
-
-export const mapProfileToCommonProfile = (profile: (Document<unknown, any, IProfile> & IProfile & {
-    _id: Types.ObjectId;
-})): CommonProfile => {
-    const provider = profile.provider;
-
-
+    return items;
 }
+
+function convertDurationToSeconds(duration: string): number {
+    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+    if (!match) {
+        return 0;
+    }
+    const hours = parseInt(match[1] || '0', 10);
+    const minutes = parseInt(match[2] || '0', 10);
+    const seconds = parseInt(match[3] || '0', 10);
+    return (hours * 3600 + minutes * 60 + seconds) * 1000;
+}
+
+
+// export const mapProfileToCommonProfile = (profile: (Document<unknown, any, IProfile> & IProfile & {
+//     _id: Types.ObjectId;
+// })): CommonProfile => {
+//     const provider = profile.provider;
+
+
+// }

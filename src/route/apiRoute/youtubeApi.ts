@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getYoutubePlaylistsItems, getYoutubeSearchQuery } from '../../controllers/ApiController/youtube'
-import { mapYoutubePlaylistItemsToCommonTracks, mapYoutubeQueryResultToCommonTracks } from "../../utils/map";
+import { mapYoutubePlaylistItemsToCommonTracks, mapYoutubeQueryResultToCommonTracks, mapYoutubeVideoDurationToPlaylistItems } from "../../utils/map";
 import { findInCache, setExCache } from "../../utils/redis";
 
 const youtubeApi = Router();
@@ -8,14 +8,16 @@ const youtubeApi = Router();
 youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
     const playlistId = req.params.playlistId;
     const userId = req.user.userId;
+    const sync = req.query.sync
 
     const cachedPlaylist = await findInCache(`youtube:playlist:${playlistId}`);
 
-    if (cachedPlaylist) {
+    if (cachedPlaylist && !sync) {
         return res.status(200).json(JSON.parse(cachedPlaylist));
     } else {
         const playlistItems = await getYoutubePlaylistsItems(playlistId, userId);
-        const mappedTracks = mapYoutubePlaylistItemsToCommonTracks(playlistItems);
+        let mappedTracks = mapYoutubePlaylistItemsToCommonTracks(playlistItems);
+        mappedTracks = await mapYoutubeVideoDurationToPlaylistItems(mappedTracks, userId);
 
         await setExCache(`youtube:playlist:${playlistId}`, JSON.stringify(mappedTracks));
 
