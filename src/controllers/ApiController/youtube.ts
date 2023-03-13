@@ -22,7 +22,7 @@ export const getYoutubePlaylists = async (userId: string) => {
     return playlistsInfo;
 }
 
-export const getYoutubePlaylistsItems = async (playlistId: string, userId: string) => {
+export const getYoutubePlaylistsItems = async (playlistId: string, userId: string): Promise<youtubePlaylistItemsResponse[]> => {
     const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
     let playlistsItems: youtubePlaylistItemsResponse[];
 
@@ -36,7 +36,7 @@ export const getYoutubePlaylistsItems = async (playlistId: string, userId: strin
         return playlistsItems;
     } catch (err) {
         console.log(err.data);
-        return;
+        return [];
     }
 }
 
@@ -64,6 +64,7 @@ export const getYoutubeVideoLength = async (id: string, userId: string): Promise
         });
         return response.data.items;
     } catch (err) {
-        return err;
+        // console.log('error ', err);
+        throw new Error(err);
     }
 }

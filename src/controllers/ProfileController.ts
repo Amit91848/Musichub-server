@@ -1,6 +1,6 @@
 import { Types } from "mongoose"
 import ProfileModel, { IProfile } from "../schema/Profile";
-import { service } from "src/types";
+import { service } from "../types";
 
 interface updateTypes {
     profile_id: Types.ObjectId,
@@ -46,10 +46,18 @@ export const updateProfile = async ({ profile_id, refreshToken, accessToken }: u
 }
 
 export const findProfileOfUser = async (userId: string, source: service) => {
-    if (source === 'youtube') source = 'google';
-    return await ProfileModel.findOne({ userId: userId, provider: [source] });
+    let newSource: string = source;
+    if (source === 'youtube') newSource = 'google';
+    return await ProfileModel.findOne({ userId: userId, provider: [newSource] });
 }
 
 export const findAllProfiles = async (userId: string) => {
     return await ProfileModel.find({ userId: userId });
+}
+
+export const deleteProfile = async (userId: string, source: service) => {
+    let newSource: string = source;
+    if (source === 'youtube') newSource = 'google';
+    console.log('deleting with userId: ', userId, ' and provider: ', newSource)
+    return await ProfileModel.deleteOne({ userId, provider: newSource });
 }

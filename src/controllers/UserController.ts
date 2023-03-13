@@ -4,6 +4,7 @@ import { createProfile, doesProfileExist, updateProfile } from "./ProfileControl
 import { Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import { Types } from "mongoose";
+import { service } from "../types";
 
 export interface Profile {
     id: string,
@@ -107,4 +108,11 @@ export const LinkAccount = async ({ req, accessToken, refreshToken, profile, don
     await UserModel.findOneAndUpdate({ _id: userId }, { $set: { [profile.provider + 'ProfileId']: serviceProfile._id } });
 
     done(null, cookieData.userId);
+}
+
+export const unsetProvider = async (userId: string, source: service) => {
+    let newSource: string = source;
+    if (source === 'youtube') newSource = 'google';
+    let fieldName = newSource + 'ProfileId'
+    return await UserModel.updateOne({ _id: userId }, { $unset: { [fieldName]: 1 } });
 }

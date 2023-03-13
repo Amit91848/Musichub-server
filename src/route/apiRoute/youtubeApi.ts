@@ -28,14 +28,16 @@ youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
 youtubeApi.get('/search/:query', async (req, res) => {
     const query = req.params.query;
     const userId = req.user.userId;
+    const sync = req.query.sync;
 
     const cachedQuery = await findInCache(`youtube:search:${query}`);
 
-    if (cachedQuery) {
+    if (cachedQuery && !sync) {
         return res.status(200).json(JSON.parse(cachedQuery));
     } else {
         const queryResults = await getYoutubeSearchQuery(query, userId);
-        const mappedQuery = mapYoutubeQueryResultToCommonTracks(queryResults.items);
+        let mappedQuery = mapYoutubeQueryResultToCommonTracks(queryResults.items);
+        mappedQuery = await mapYoutubeVideoDurationToPlaylistItems(mappedQuery, userId);
         await setExCache(`youtube:search:${query}`, JSON.stringify(mappedQuery));
         return res.status(200).json(mappedQuery);
     }

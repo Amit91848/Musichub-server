@@ -25,10 +25,10 @@ apiRoute.use('/youtube', youtubeApi);
 apiRoute.use('/playlists', async (req, res) => {
     let playlists: playlist;
     const userId = req.user.userId;
-    console.log(userId);
+    const sync = req.query.sync
 
     const cachedPlaylist = await redisClient.get(`${userId}:all:Playlists`)
-    if (cachedPlaylist) {
+    if (cachedPlaylist && !sync) {
         playlists = JSON.parse(cachedPlaylist);
         return res.status(200).json({ playlists });
     } else {

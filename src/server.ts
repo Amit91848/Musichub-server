@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import apiRoute from './route/apiRoute';
 import cors from 'cors'
-import { createClient } from 'redis';
 import { connectRedis } from './config/redisSetup';
 
 const app = express();
@@ -19,14 +18,14 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log(err));
 
 app.use((_, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', `${process.env.FRONTEND_URL}`);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: `${process.env.FRONTEND_URL}`,
     credentials: true
 }))
 app.use(cookieParser());

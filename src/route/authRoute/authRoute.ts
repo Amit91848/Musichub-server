@@ -22,14 +22,14 @@ authRoute.get('/success', (req, res) => {
         sameSite: "lax",
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 30,
-        secure: true
+        secure: process.env.NODE_ENV === 'production'
     });
-    res.redirect('http://localhost:3000/library')
+    res.redirect(`${process.env.FRONTEND_URL}/library`)
 });
 
 
 authRoute.get('/linksuccess', (_, res) => {
-    res.redirect('http://localhost:3000/library');
+    res.redirect(`${process.env.FRONTEND_URL}/library`);
 })
 
 authRoute.get('/failed', (_, res) => {
@@ -45,7 +45,7 @@ authRoute.get('/spotify/link/callback', authenticateOAuthCallback('spotify', lin
 
 authRoute.get('/logout', (_, res) => {
     logoutUser(res);
-    res.redirect('http://localhost:3000/login');
+    res.json({ success: true, message: 'Logged out successfully' });
 })
 
 export default authRoute;

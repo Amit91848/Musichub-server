@@ -1,12 +1,4 @@
-import { CommonProfile } from "../../types";
-import { mapProfileToCommonProfile } from "../../utils/map";
 import { findAllProfiles } from "../ProfileController";
-
-interface tp {
-    youtube: CommonProfile,
-    soundcloud: CommonProfile,
-    spotify: CommonProfile
-}
 
 export const fetchUserData = async (userId: string) => {
     const profiles = await findAllProfiles(userId);
