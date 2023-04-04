@@ -42,7 +42,7 @@ export const authenticateOAuthCallback = (type: string, linking?: boolean) => {
             return passport.authenticate(googleLink, { failureRedirect: '/auth/failed', successRedirect: '/auth/linksuccess' })
         }
         else {
-            return passport.authenticate(googleAuth, { failureRedirect: process.env.FAILED_REDIRECT, successRedirect: 'http://localhost:4040/auth/success' })
+            return passport.authenticate(googleAuth, { failureRedirect: process.env.FAILED_REDIRECT, successRedirect: '/auth/success' })
         };
 
     } else {
@@ -50,7 +50,7 @@ export const authenticateOAuthCallback = (type: string, linking?: boolean) => {
             return passport.authenticate(spotifyLink, { failureRedirect: '/auth/failed', successRedirect: '/auth/linksuccess' })
         }
         else {
-            return passport.authenticate(spotifyAuth, { failureRedirect: process.env.FAILED_REDIRECT, successRedirect: 'http://localhost:4040/auth/success' })
+            return passport.authenticate(spotifyAuth, { failureRedirect: process.env.FAILED_REDIRECT, successRedirect: '/auth/success' })
         };
     }
 

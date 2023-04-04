@@ -5,6 +5,7 @@ import { getYoutubePlaylists } from "./youtube";
 import { getSoundcloudPlaylists } from "./soundcloud";
 import { CommonPlaylist, service } from "../../types";
 import { mapSpotifyToCommonFormat, mapYoutubeToCommonFormat } from "../../utils/map";
+import { getCustomPlaylists } from "./custom";
 
 export const getAllPlaylists = async (userId: string, service: service): Promise<CommonPlaylist[]> => {
     const profile = await findProfileOfUser(userId, service);
@@ -29,9 +30,11 @@ export const getAllPlaylists = async (userId: string, service: service): Promise
     } else if (service === 'youtube') {
         playlists = await getYoutubePlaylists(userId);
         return mapYoutubeToCommonFormat(playlists);
-    } else {
+    } else if (service === 'soundcloud') {
         playlists = await getSoundcloudPlaylists(accessToken, oauthId);
         return playlists;
+    } else if (service === 'custom') {
+        playlists = await getCustomPlaylists(userId);
     }
     return [];
 }

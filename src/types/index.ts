@@ -1,4 +1,4 @@
-export type service = 'youtube' | 'spotify' | 'soundcloud'
+export type service = 'youtube' | 'spotify' | 'soundcloud' | 'custom'
 
 export interface CommonPlaylist {
     playlistId: string,

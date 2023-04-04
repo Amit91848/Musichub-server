@@ -7,6 +7,7 @@ import { CommonPlaylist } from '../../types/index'
 import userRoute from './userApi';
 import searchRoute from './searchApi';
 import redisClient from '../../config/redisSetup';
+import customRoute from './customApi';
 
 const apiRoute = Router();
 
@@ -36,6 +37,7 @@ apiRoute.use('/playlists', async (req, res) => {
             const spotifyPlaylists = await getAllPlaylists(userId, 'spotify');
             const soundcloudPlaylists = await getAllPlaylists(userId, 'soundcloud');
             const youtubePlaylists = await getAllPlaylists(userId, 'youtube');
+            // const customPlaylists = await getAllPlaylists(userId, 'custom');
             playlists = {
                 soundcloud: soundcloudPlaylists,
                 youtube: youtubePlaylists,
@@ -53,5 +55,7 @@ apiRoute.use('/playlists', async (req, res) => {
 apiRoute.use('/user', userRoute);
 
 apiRoute.use('/search', searchRoute);
+
+apiRoute.use('/custom', customRoute);
 
 export default apiRoute;

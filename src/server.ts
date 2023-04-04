@@ -17,6 +17,7 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Mongodb connected'))
     .catch(err => console.log(err));
 
+app.use(cors())
 app.use((_, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', `${process.env.FRONTEND_URL}`);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -24,10 +25,6 @@ app.use((_, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
-app.use(cors({
-    origin: `${process.env.FRONTEND_URL}`,
-    credentials: true
-}))
 app.use(cookieParser());
 app.use(session({
     secret: process.env.SESSION_SECRET,

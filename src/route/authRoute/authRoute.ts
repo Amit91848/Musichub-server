@@ -29,7 +29,7 @@ authRoute.get('/success', (req, res) => {
 
 
 authRoute.get('/linksuccess', (_, res) => {
-    res.redirect(`${process.env.FRONTEND_URL}/library`);
+    res.status(200).json({ message: 'success' });
 })
 
 authRoute.get('/failed', (_, res) => {

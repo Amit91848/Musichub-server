@@ -14,6 +14,7 @@ export const verifyJWT = () => {
 
         const decoded = verify(token, process.env.JWT_SECRET);
         req.user = decoded;
+
         // console.log('decoded: ', decoded);
 
         // const now = Date.now().valueOf() / 1000;
