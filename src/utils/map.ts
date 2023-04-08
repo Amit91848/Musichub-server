@@ -1,8 +1,6 @@
-import { Document, Types } from "mongoose";
 import { CommonPlaylist, CommonTracks } from "../types";
 import { SpotifyPlaylist, SpotifyTracksShort } from "../types/spotify";
 import { youtubePlaylistItemsResponse, youtubePlaylistResponse, youtubeSearchQuery } from "../types/youtube";
-import { IProfile } from "../schema/Profile";
 import { getYoutubeVideoLength } from "../controllers/ApiController/youtube";
 
 export const mapSpotifyTracksToCommonTracks = (tracks: SpotifyTracksShort[]): CommonTracks[] => {

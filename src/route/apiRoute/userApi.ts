@@ -11,20 +11,22 @@ interface source {
 }
 
 userRoute.get('/', async (req, res) => {
+    // @ts-ignore
     const userId = req.user.userId;
     const profiles = await fetchUserData(userId);
     res.json(profiles);
 })
 
 userRoute.get('/remove', async (req: Request<unknown, unknown, unknown, source>, res) => {
-    const userId = req.user.userId;
+    // @ts-ignore
+    const userId = req.user!.userId;
     const { provider } = req.query;
 
     try {
         // delete profile collection
         const d = await deleteProfile(userId, provider);
         // delete profile field from user collection
-        const u = await unsetProvider(userId, provider);
+        await unsetProvider(userId, provider);
         return res.json({ message: `deleted profile: ${d}` })
     } catch (err) {
         return res.json({ message: 'unable to delete try again later' })

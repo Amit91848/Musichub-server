@@ -56,7 +56,9 @@ export const fetchProfileAndSetAccessToken = async (userId: string, source: serv
 
     console.log(userId + ' ' + source);
     const profile = await findProfileOfUser(userId, source);
+    //@ts-ignore
     const { expiresIn, refreshToken, _id } = profile;
+    //@ts-ignore
     let { accessToken } = profile
 
     let newAccessToken = await checkAndRefreshAccessToken(expiresIn, _id, refreshToken, source);

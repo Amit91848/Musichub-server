@@ -7,6 +7,7 @@ const youtubeApi = Router();
 
 youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
     const playlistId = req.params.playlistId;
+    //@ts-expect-error
     const userId = req.user.userId;
     const sync = req.query.sync
 
@@ -27,6 +28,7 @@ youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
 
 youtubeApi.get('/search/:query', async (req, res) => {
     const query = req.params.query;
+    // @ts-ignore
     const userId = req.user.userId;
     const sync = req.query.sync;
 

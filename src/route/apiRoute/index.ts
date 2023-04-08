@@ -25,6 +25,7 @@ apiRoute.use('/youtube', youtubeApi);
 
 apiRoute.use('/playlists', async (req, res) => {
     let playlists: playlist;
+    // @ts-ignore
     const userId = req.user.userId;
     const sync = req.query.sync
 

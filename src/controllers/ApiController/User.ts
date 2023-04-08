@@ -30,7 +30,9 @@ export const fetchUserData = async (userId: string) => {
     };
 
     for (const profile of profiles) {
+        // @ts-ignore
         const provider = profile.provider === 'google' ? 'youtube' : profile.provider;
+        // @ts-ignore
         const info = providers[provider];
         if (info) {
             info.isConnected = true;

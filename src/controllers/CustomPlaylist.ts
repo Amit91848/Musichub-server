@@ -6,6 +6,6 @@ export const createCustomPlaylist = async (userId: string, name: string, tracks:
     return playlist;
 }
 
-export const fetchCustomPlaylist = async (userId: string) => {
+export const fetchCustomPlaylist = async (_: string) => {
     return [];
 }

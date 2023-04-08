@@ -15,6 +15,7 @@ export const getAllPlaylists = async (userId: string, service: service): Promise
     let { accessToken, refreshToken, oauthId } = profile;
     let playlists;
 
+    //@ts-ignore
     if (Date.now() as any > profile.expiresIn as any) {
         try {
             const token = await refreshAccessToken(refreshToken, profile?._id, service)

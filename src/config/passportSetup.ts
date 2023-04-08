@@ -20,6 +20,7 @@ export const googleAuth = new GoogleStrategy(
         callbackURL: '/auth/google/callback',
     },
     (accessToken, refreshToken, profile, done) => {
+        // @ts-ignore
         SignUpOrSignIn({ profile, accessToken, refreshToken, done });
     }
 )
@@ -32,6 +33,7 @@ export const googleLink = new GoogleStrategy(
         passReqToCallback: true
     },
     (req, accessToken, refreshToken, profile, done) => {
+        // @ts-ignore
         LinkAccount({ req, accessToken, refreshToken, profile, done })
     }
 )

@@ -71,7 +71,9 @@ export const SignUpOrSignIn = async ({ accessToken, refreshToken, profile, done 
             if (profile._json.images.length !== 0) picture = profile._json.images[0].url
         } else if (profile.provider === 'google') picture = profile._json.picture
 
-        let newProfile = await createProfile({ accessToken, refreshToken, oauthId: profile.id, provider: profile.provider, userId: user._id, name: profile.displayName, picture });
+        const provider = profile.provider as service;
+
+        let newProfile = await createProfile({ accessToken, refreshToken, oauthId: profile.id, provider: provider, userId: user._id, name: profile.displayName, picture });
         serviceProfile = newProfile;
 
         // link user to profile
@@ -99,9 +101,10 @@ export const LinkAccount = async ({ req, accessToken, refreshToken, profile, don
         if (profile._json.images.length !== 0) picture = profile._json.images[0].url
     } else if (profile.provider === 'google') picture = profile._json.picture
 
+    const provider = profile.provider as service;
     if (!serviceProfile) {
         // Create profile if signing in for the first time
-        serviceProfile = await createProfile({ accessToken, refreshToken, oauthId: profile.id, provider: profile.provider, userId, picture, name: profile.displayName });
+        serviceProfile = await createProfile({ accessToken, refreshToken, oauthId: profile.id, provider, userId, picture, name: profile.displayName });
     }
 
     // link user to service profile

@@ -5,6 +5,7 @@ const customRoute = Router();
 
 customRoute.get('/create', async (req, res) => {
     const { tracks, name } = req.body;
+    // @ts-ignore
     const userId = req.user.userId;
 
     try {

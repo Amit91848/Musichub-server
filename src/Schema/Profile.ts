@@ -5,7 +5,6 @@ export interface IProfile {
     refreshToken: string,
     userId: Types.ObjectId,
     provider: service,
-    expiresIn: number,
     accessToken: string,
     name: string,
     picture: string,

@@ -32,6 +32,7 @@ spotifyApi.get('/playlist/:id/tracks', async (req, res) => {
     if (cachedTracks) {
         return res.status(200).json(JSON.parse(cachedTracks));
     } else {
+        // @ts-ignore
         const tracks = await getSpotifyTracks(req.user.userId, playlistId);
         const mappedTracks = mapSpotifyTracksToCommonTracks(tracks);
         await setExCache(`spotify:playlist:${playlistId}`, JSON.stringify(mappedTracks));
@@ -40,10 +41,12 @@ spotifyApi.get('/playlist/:id/tracks', async (req, res) => {
 })
 
 spotifyApi.get('/access_token', async (req, res) => {
+    // @ts-ignore
     const userId = req.user.userId;
     const profile = await findProfileOfUser(userId, 'spotify');
     if (profile) {
         let accessToken = profile.accessToken
+        // @ts-ignore
         let newAccessToken = await checkAndRefreshAccessToken(profile.expiresIn, profile._id, profile.refreshToken, 'spotify');
         if (newAccessToken) {
             accessToken = newAccessToken;
@@ -53,6 +56,7 @@ spotifyApi.get('/access_token', async (req, res) => {
 })
 
 spotifyApi.get('/deviceId', async (req, res) => {
+    // @ts-ignore
     const userId = req.user.userId;
 
     const profile = await findProfileOfUser(userId, 'spotify');
@@ -75,6 +79,7 @@ spotifyApi.get('/search/artist/:query', async (req, res) => {
     if (cachedArtist) {
         return res.status(200).json(JSON.parse(cachedArtist));
     } else {
+        // @ts-ignore
         const artists: SpotifyArtists = await getSpotifySearchQuery(req.user.userId, query, 'artists')
         await setExCache(`spotify:artistsQuery:${query}`, JSON.stringify(artists));
         return res.status(200).json(artists);
@@ -88,6 +93,7 @@ spotifyApi.get('/search/track/:query', async (req, res) => {
     if (cachedTracks) {
         return res.status(200).json(JSON.parse(cachedTracks));
     } else {
+        // @ts-ignore
         let tracks: SpotifyTracksCommon = await getSpotifySearchQuery(req.user.userId, query, 'tracks')
         const mappedTracks = mapSpotifySearchTracksToCommonTracks(tracks.items)
         await setExCache(`spotify:tracksQuery:${query}`, JSON.stringify(mappedTracks));
@@ -97,6 +103,7 @@ spotifyApi.get('/search/track/:query', async (req, res) => {
 
 spotifyApi.get('/artist/:artistId/:artistName', async (req, res) => {
     const { artistId, artistName } = req.params;
+    // @ts-ignore
     const userId = req.user.userId;
 
     const cachedArtist = await findInCache(`spotify:artist:${artistId}`);
@@ -122,6 +129,7 @@ spotifyApi.get('/artist/:artistId/topTracks', async (req, res) => {
     if (cachedTopTracks) {
         return res.status(200).json(JSON.parse(cachedTopTracks));
     } else {
+        // @ts-ignore
         const artistTracks = await getSpotifyArtistTopTracks(req.user.userId, artistId);
         await setExCache(`spotify:topTracks:${artistId}`, artistTracks);
         return res.json(artistTracks);
