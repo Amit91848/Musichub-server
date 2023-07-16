@@ -56,7 +56,7 @@ Server will be running on https://localhost:4000
 
 ## Frontend
 
-<a href="https://github.com/Amit91848/Musichub-client>Frontend">Link for frontend repository</a>
+<a href="https://github.com/Amit91848/Musichub-client">Link for frontend repository</a>
 
 ## More images
 
