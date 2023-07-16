@@ -8,6 +8,7 @@ export const createJWT = (payload: string): string => {
 export const verifyJWT = () => {
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.cookies.appUser;
+        // console.log(req.cookies);
         if (!token) return res.status(401).json({ message: 'No token unauthorized' })
 
         // try {

@@ -8,6 +8,10 @@
 
 Clone it!
 
+```sh
+$ git clone https://github.com/Amit91848/Musichub-server/
+```
+
 .env file example
 
 ```

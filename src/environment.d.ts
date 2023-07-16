@@ -19,7 +19,10 @@ declare global {
             SPOTIFY_BASE_URL: !string,
             YOUTUBE_BASE_URL: !string,
             YOUTUBE_API_KEY: !string,
-            FRONTEND_URL: !string
+            FRONTEND_URL: !string,
+            REDIS_PASSWORD: !string,
+            REDIS_HOST: !string,
+            REDIS_PORT: !number
         }
     }
 }

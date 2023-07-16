@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getSpotifySearchQuery, getSpotifyPlaylists, getSpotifyTracks, getSpotifyArtistTopTracks } from "../../controllers/ApiController/spotify";
+import { getSpotifySearchQuery, getSpotifyPlaylists, getSpotifyTracks, getSpotifyArtistTopTracks, addTrackToSpotifyPlaylist } from "../../controllers/ApiController/spotify";
 import { mapSpotifySearchTracksToCommonTracks, mapSpotifyTracksToCommonTracks } from "../../utils/map";
 import { findProfileOfUser } from "../../controllers/ProfileController";
 import { createAxiosIntance } from "../../utils/axios";
@@ -38,6 +38,21 @@ spotifyApi.get('/playlist/:id/tracks', async (req, res) => {
         await setExCache(`spotify:playlist:${playlistId}`, JSON.stringify(mappedTracks));
         return res.status(200).json(mappedTracks);
     }
+})
+
+spotifyApi.post('/playlist/:id/', async (req, res) => {
+    const playlistId = req.params.id;
+    const trackUri = req.body.trackUri;
+    // @ts-ignore
+    const userId = req.user.userId;
+
+    var response
+    try {
+        response = await addTrackToSpotifyPlaylist(userId, trackUri, playlistId);
+    } catch (err) {
+    }
+
+    res.json({ message: `add track ${trackUri} to ${playlistId} got response ${response}` })
 })
 
 spotifyApi.get('/access_token', async (req, res) => {

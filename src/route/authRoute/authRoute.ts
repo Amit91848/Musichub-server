@@ -16,20 +16,22 @@ authRoute.get('/spotify/callback', authenticateOAuthCallback('spotify', !linking
 
 authRoute.get('/success', (req, res) => {
     // console.log(req.session.passport.user.userId);
+    console.log('at success setting jwt');
     // @ts-expect-error
     const jwt = createJWT(req.session.passport.user.userId as any);
+    console.log(jwt);
     res.cookie('appUser', jwt, {
         sameSite: "lax",
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 30,
-        secure: process.env.NODE_ENV === 'production'
-    });
-    res.redirect(`${process.env.FRONTEND_URL}/library`)
+        // domain: '.vercel.app',
+        // secure: true
+    }).redirect(`${process.env.FRONTEND_URL}/library`);
 });
 
 
 authRoute.get('/linksuccess', (_, res) => {
-    res.status(200).json({ message: 'success' });
+    res.redirect(`${process.env.FRONTEND_URL}/library`)
 })
 
 authRoute.get('/failed', (_, res) => {

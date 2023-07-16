@@ -73,3 +73,19 @@ export const getSpotifyArtistTopTracks = async (userId: string, artistId: string
         console.log(err);
     }
 }
+
+export const addTrackToSpotifyPlaylist = async (userId: string, trackUri: string, playlistId: string) => {
+    const accessToken = await fetchProfileAndSetAccessToken(userId, 'spotify');
+
+    const addToPlaylistInstance = createAxiosIntance({ accessToken, baseURL: spotifyURL });
+
+    var response;
+    try {
+        response = await addToPlaylistInstance.post(`/playlists/${playlistId}/tracks`, { uris: [trackUri] });
+        console.log('response ', response);
+    } catch (err) {
+        console.log(err.data.error);
+    }
+
+    return response;
+}

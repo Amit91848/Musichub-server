@@ -54,6 +54,29 @@ export const getYoutubeSearchQuery = async (query: string, userId: string) => {
     }
 }
 
+export const addTrackToYoutubePlaylist = async (userId: string, trackId: string, playlistId: string) => {
+    const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
+    try {
+        const response = await axios.post(`${youtubeURL}/playlistItems?part=snippet&key=${youtubeKey}`, {
+            snippet: {
+                playlistId: playlistId,
+                resourceId: {
+                    kind: 'youtube#video',
+                    videoId: trackId
+                }
+            }
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+
+        return response.data
+    } catch (err) {
+        console.log(err.response.data);
+    }
+}
+
 export const getYoutubeVideoLength = async (id: string, userId: string): Promise<youtubeVideosQuery[]> => {
     const accessToken = await fetchProfileAndSetAccessToken(userId, 'youtube');
     try {

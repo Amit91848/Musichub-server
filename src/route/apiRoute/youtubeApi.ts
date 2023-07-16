@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getYoutubePlaylistsItems, getYoutubeSearchQuery } from '../../controllers/ApiController/youtube'
+import { addTrackToYoutubePlaylist, getYoutubePlaylistsItems, getYoutubeSearchQuery } from '../../controllers/ApiController/youtube'
 import { mapYoutubePlaylistItemsToCommonTracks, mapYoutubeQueryResultToCommonTracks, mapYoutubeVideoDurationToPlaylistItems } from "../../utils/map";
 import { findInCache, setExCache } from "../../utils/redis";
 
@@ -24,6 +24,23 @@ youtubeApi.get('/playlist/:playlistId/tracks', async (req, res) => {
 
         return res.status(200).json(mappedTracks);
     }
+})
+
+youtubeApi.post('/playlist/:playlistId', async (req, res) => {
+    const playlistId = req.params.playlistId;
+    const trackUri = req.body.trackUri as string // source:track:trackId
+    const trackId = trackUri.split(":")[2];
+    //@ts-expect-error
+    const userId = req.user.userId;
+
+    try {
+        const response = await addTrackToYoutubePlaylist(userId, trackId, playlistId);
+        return res.status(200).json({ response });
+    } catch (err) {
+        throw new Error('Error in calling add to track: ' + err)
+    }
+
+    return res.status(200).json({ trackId });
 })
 
 youtubeApi.get('/search/:query', async (req, res) => {
